@@ -18,19 +18,44 @@ const Student = ({name, age, classroom}) => {
     )
 }
 
-const School = ({students}) => {
-    return (
-        <div>
-            {students.map(
-                (student, i) => <Student key={i} 
-                                name={student.name} 
-                                age={student.age} 
-                                classroom={student.classroom} />
-            )
+class School extends React.Component {
+
+    state = { open: false }
+    // constructor(props) {
+    //     super(props) 
+    //     this.state = {
+    //         graduate: false,
+    //         open: true
+    //         }
+    //     this.toggleOpenClose = this.toggleOpenClose.bind(this)
+    //     }
+
+        toggleOpenClose = () =>  {
+            this.setState(prevState => ( {
+                open: !prevState.open
+            }))
         }
-        </div>
-    )
+    render() {
+       const { students } = this.props
+        return (
+            
+            <div>
+            <button onClick = { this.toggleOpenClose }>Toggle</button>
+            <h1>This school is {this.state.open ? 'open': 'closed'}</h1>
+                {students.map(
+                    (student, i) => <Student key={i} 
+                                    name={student.name} 
+                                    age={student.age} 
+                                    classroom={student.classroom} />
+                )
+            }
+            <p>The student is {this.state.graduate ? 'graduate': 'not graduate'}</p>
+            </div>
+            
+        )
+    }
 }
+    
 
 // const Hello = ({fname, lname, msg}) => {
 //     return (
