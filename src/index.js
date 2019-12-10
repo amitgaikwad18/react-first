@@ -8,19 +8,35 @@ let studentList = [
     {"name": "Abhijit Gaikwad", "age": 35, "classroom": 20}
 ]
 
-const Student = ({name, age, classroom}) => {
+const Student = ({name, age, classroom, graduate}) => {
     return (
         <section>
             <h2>Name: {name}</h2>
             <p>Age: {age}</p>
             <p>class: {classroom}</p>
+            <p>Gaduate: {graduate ? 'Yes':'No'}</p>
         </section>
     )
 }
 
+const Opening = () => {
+    return(
+        <div>
+            <h1>School is opening soon.</h1>
+        </div>
+    )}
+
+const Closing = () => <div><h1>School is closing soon.</h1></div>
+
 class School extends React.Component {
 
-    state = { open: false }
+    state = { 
+        open: true,
+        graduate: true,
+        opening: true,
+        data: [],
+        loading: false
+     }
     // constructor(props) {
     //     super(props) 
     //     this.state = {
@@ -29,6 +45,13 @@ class School extends React.Component {
     //         }
     //     this.toggleOpenClose = this.toggleOpenClose.bind(this)
     //     }
+
+    componentDidMount() {
+        this.setState({loading: true})
+        fetch('http://amtg-label-dgtlztn-nd-qa-amtg-label-digitalization-qa.qapps.firmenich.com/status')
+        .then(data => data.json())
+        .then(data => this.setState({data, loading: false}))
+    }
 
         toggleOpenClose = () =>  {
             this.setState(prevState => ( {
@@ -40,13 +63,35 @@ class School extends React.Component {
         return (
             
             <div>
+            {this.state.loading ? 'Loading...' : 
+                    <div>
+                        {this.state.data.map((status, j) => {
+                            return(
+                                <div key={j}>
+                                    <p>Server Name: {status.lf_server}</p>
+                                    {status.lf_svc.map((svc, k) => {
+                                        return(
+                                            <div key={k}>
+                                                <p>Service: {svc.name}</p>
+                                                <p>Status: {svc.status = 'running' ? 'Running': 'Stopped'}</p>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            )
+                        })}
+                        
+                    </div>}
+            {this.state.opening ? <Opening/> : <Closing/>}
             <button onClick = { this.toggleOpenClose }>Toggle</button>
             <h1>This school is {this.state.open ? 'open': 'closed'}</h1>
                 {students.map(
                     (student, i) => <Student key={i} 
                                     name={student.name} 
                                     age={student.age} 
-                                    classroom={student.classroom} />
+                                    classroom={student.classroom} 
+                                    graduate= {this.state.graduate}
+                                    />
                 )
             }
             <p>The student is {this.state.graduate ? 'graduate': 'not graduate'}</p>
